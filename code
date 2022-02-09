@@ -1,20 +1,23 @@
 from bs4.element import TemplateString
 from bs4 import BeautifulSoup
 import requests
+import yagmail
 
 url = "https://weather.com/weather/tenday/l/ca56f3612e83373c0833df5a107e37a43550a3d5fec6055758a8120409026b9d"
 req = requests.get(url)
 soup = BeautifulSoup(req.text, "html.parser")
-day1_temp = soup.find_all('div', attrs={"class": "DailyConten--temp--3d4dn"})
-day2_temp = soup.find_all('div', attrs={"class": ""})
-day3_temp = soup.find_all('div', attrs={"class": ""})
-day4_temp = soup.find_all('div', attrs={"class": ""})
-day5_temp = soup.find_all('div', attrs={"class": ""})
-day1_cond = soup.find_all('div', attrs={"class": ""})
-day2_cond = soup.find_all('div', attrs={"class": ""})
-day3_cond = soup.find_all('div', attrs={"class": ""})
-day4_cond = soup.find_all('div', attrs={"class": ""})
-day5_cond = soup.find_all('div', attrs={"class": ""})
+day_temp = soup.find_all('span', attrs={"class": "DetailsSummary--highTempValue--3Oteu"})
+day_cond = soup.find_all('span', attrs={"class": "DetailsSummary--extendedData--365A_"})
+for span in day_temp:
+    print(span.text)
+for span in day_cond:
+    print(span.text)
+yag = yagmail.SMTP('username', 'pass')
+#yag.send('rosaria4664@gmail.com', "weather report", contents)
 
-for div in day1_temp:
-    print(div.text)
+contents = str(day_cond + day_temp)
+
+weather_list = []
+for x in day_temp:
+    weather_list.append(x)
+print(weather_list)
