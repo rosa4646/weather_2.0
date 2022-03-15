@@ -27,7 +27,7 @@ def snow_func():
     "Temperature outside is at 32 or lower :(",
     duration = 20,
 )
-    yag.send('rosaria4664@gmail.com', "weather report", str(temperature))
+    yag.send('email', "weather report", str(temperature))
 
 temperature = int(temp[0].text.strip("°F"))
 
