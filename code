@@ -3,23 +3,24 @@ from bs4 import BeautifulSoup
 import requests
 import yagmail
 from win10toast import ToastNotifier
-
-prompt = input("Do you wish to search for the weather? (y/n/yes/no) ")
-if prompt == "y":
-    city = input("What city would you like to know the weather of? ")
-    state = input("What state is the city in? ")
-elif prompt == "n":
-    print("See ya!")
-else:
-    print("ERROR! Please use proper syntax!")
+import schedule
+import time 
 
 toast = ToastNotifier()
 
-url = f"https://www.google.com/search?q=weather+{city}+{state}"
-req = requests.get(url)
-soup = BeautifulSoup(req.text, "html.parser")
-temp = soup.find_all('div', attrs={"class": "BNeawe iBp4i AP7Wnd"})
-yag = yagmail.SMTP('username', 'password')
+def weather_func():
+    global temp
+    global temperature  
+    url = f"https://www.google.com/search?q=weather+city+state"
+    req = requests.get(url)
+    soup = BeautifulSoup(req.text, "html.parser")
+    temp = soup.find_all('div', attrs={"class": "BNeawe iBp4i AP7Wnd"})
+    temperature = int(temp[0].text.strip("°F"))
+    if temperature <=32:
+        snow_func() 
+        print(temperature)
+
+yag = yagmail.SMTP('email', 'password')
 
 def snow_func():
     toast.show_toast(
@@ -29,8 +30,7 @@ def snow_func():
 )
     yag.send('email', "weather report", str(temperature))
 
-temperature = int(temp[0].text.strip("°F"))
-
-if temperature <=32:
-    snow_func() 
-print(temperature)
+schedule.every().day.at("1:00").do(weather_func)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
